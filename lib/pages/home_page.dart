@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:messageapp/controllers/message_controller.dart';
 import 'package:messageapp/controllers/user_controller.dart';
+import 'package:messageapp/pages/messages_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,7 +9,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userController = UserController();
-    String m = '';
     return Scaffold(
       body: FutureBuilder(
         future: http.get(userController.getUsers()),
@@ -21,22 +18,51 @@ class HomePage extends StatelessWidget {
             final users = userController.allUsers();
             return ListView.builder(
               itemCount: users.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  trailing: CircleAvatar(
-                    child: FadeInImage.assetNetwork(
-                      placeholder: users[index].placeHolder,
-                      image: (users[index].photoUrl ?? ''),
+              itemBuilder: (context, index) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    minVerticalPadding: 20,
+                    tileColor: Theme.of(context)
+                        .colorScheme
+                        .onPrimaryContainer
+                        .withOpacity(.05),
+                    title: Text(
+                      users[index].name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    subtitle: Text(
+                      "last message",
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    leading: ClipOval(
+                      child: FadeInImage.assetNetwork(
+                        placeholder: users[index].placeHolder,
+                        image: (users[index].photoUrl ?? ''),
+                      ),
+                    ),
+                    trailing: const Column(
+                      children: [
+                        Text("Data"),
+                        Text("3"),
+                      ],
+                    ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MessagesPage(user: users[index]),
+                      ),
                     ),
                   ),
-                  title: Text(users[index].name),
-                );
-              },
+                  const Divider(height: 0.01),
+                ],
+              ),
             );
           } else {
-            m = 'falhou';
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
-          return Text(m);
         },
       ),
       bottomNavigationBar: BottomAppBar(
