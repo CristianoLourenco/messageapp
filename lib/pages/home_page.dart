@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:messageapp/controllers/user_controller.dart';
 import 'package:messageapp/pages/messages_page.dart';
 
@@ -9,6 +10,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userController = UserController();
+    final textTheme = Theme.of(context).textTheme;
+    final dataFormat = DateFormat.yMd();
+    final hour = DateFormat.Hm();
+
     return Scaffold(
       body: FutureBuilder(
         future: http.get(userController.getUsers()),
@@ -29,11 +34,11 @@ class HomePage extends StatelessWidget {
                         .withOpacity(.05),
                     title: Text(
                       users[index].name,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: textTheme.titleMedium,
                     ),
                     subtitle: Text(
                       "last message",
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: textTheme.labelSmall,
                     ),
                     leading: ClipOval(
                       child: FadeInImage.assetNetwork(
@@ -41,10 +46,20 @@ class HomePage extends StatelessWidget {
                         image: (users[index].photoUrl ?? ''),
                       ),
                     ),
-                    trailing: const Column(
+                    trailing: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text("Data"),
-                        Text("3"),
+                        Text(hour.format(DateTime.now())),
+                        const SizedBox(height: 5),
+                        CircleAvatar(
+                          radius: 11,
+                          child: Text(
+                            "10",
+                            overflow: TextOverflow.fade,
+                            softWrap: false,
+                            style: textTheme.bodySmall?.copyWith(fontSize: 10),
+                          ),
+                        )
                       ],
                     ),
                     onTap: () => Navigator.push(
