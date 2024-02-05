@@ -20,6 +20,7 @@ class UserController {
   }
 
   List<UserModel> allUsers() {
-    return users;
+    final allUsers = users;
+    return allUsers;
   }
 }

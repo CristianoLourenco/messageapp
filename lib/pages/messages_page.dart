@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:messageapp/models/user_model.dart';
 
 class MessagesPage extends StatelessWidget {
+  const MessagesPage({
+    super.key,
+    required this.user,
+  });
+
   final UserModel user;
-  const MessagesPage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: Row(
           children: [
             ClipOval(
