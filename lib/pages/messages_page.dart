@@ -13,7 +13,12 @@ class MessagesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleTextStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
         backgroundColor: Theme.of(context).primaryColor,
+        iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
         title: Row(
           children: [
             ClipOval(
@@ -23,14 +28,21 @@ class MessagesPage extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Text(
-              user.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.w500),
+            Text.rich(
+              textAlign: TextAlign.start,
+              TextSpan(
+                children: [
+                  TextSpan(text: user.name),
+                  TextSpan(
+                    text: '\nOnline',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white54,
+                        ),
+                  ),
+                ],
+              ),
             ),
-            const Spacer(flex: 5),
+            const Spacer(flex: 10),
           ],
         ),
       ),
