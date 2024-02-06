@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:messageapp/controllers/message_controller.dart';
 import 'package:messageapp/controllers/user_controller.dart';
 import 'package:messageapp/pages/messages_page.dart';
 
@@ -10,6 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userController = UserController();
+
     final textTheme = Theme.of(context).textTheme;
     final dataFormat = DateFormat.yMd();
     final hour = DateFormat.Hm();
@@ -65,7 +67,9 @@ class HomePage extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MessagesPage(user: users[index]),
+                        builder: (context) => MessagesPage(
+                          user: users[index],
+                        ),
                       ),
                     ),
                   ),

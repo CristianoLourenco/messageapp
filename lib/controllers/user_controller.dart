@@ -12,9 +12,9 @@ class UserController {
   }
 
   void convertJsonUsers(dynamic json) {
-    final t = jsonDecode(json) as List<dynamic>;
+    final usersJson = jsonDecode(json) as List<dynamic>;
 
-    for (var data in (t)) {
+    for (var data in (usersJson)) {
       users.add(UserModel.fromJson(data));
     }
   }

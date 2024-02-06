@@ -15,14 +15,14 @@ class MessageModel {
     this.isDeleted = false,
   });
 
-  factory MessageModel.fromJson(Map<dynamic, String> json) {
+  factory MessageModel.fromJson(dynamic json) {
     final model = MessageModel(
       senderId: json['senderId'] ?? '',
       receiverId: json['receiverId'] ?? '',
       content: json['content'] ?? '',
-      createdDate: json['phoneNumber'] as DateTime,
-      isDeleted: json['isDe,leted'] as bool,
-      deletedDate: json['deletedDate'] as DateTime,
+      createdDate: DateTime.parse(json['createdDate']),
+      isDeleted: json['isDeleted'] as bool,
+      deletedDate: DateTime.parse(json['deletedDate']),
     );
     return model;
   }
