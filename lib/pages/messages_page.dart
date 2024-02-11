@@ -11,6 +11,7 @@ class MessagesPage extends StatelessWidget {
   });
 
   final UserModel user;
+
   @override
   Widget build(BuildContext context) {
     final messageController = MessageController();
@@ -70,6 +71,8 @@ class MessagesPage extends StatelessWidget {
           children: [
             const Flexible(
               child: TextField(
+                minLines: 1,
+                maxLines: 4,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   filled: true,
@@ -124,7 +127,3 @@ class MessagesPage extends StatelessWidget {
         )
       : Image.asset('assets/images/no_messages.png');
 }
-
-/**
- * else 
- */

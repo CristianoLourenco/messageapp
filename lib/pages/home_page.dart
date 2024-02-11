@@ -1,7 +1,8 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:messageapp/controllers/message_controller.dart';
 import 'package:messageapp/controllers/user_controller.dart';
 import 'package:messageapp/pages/messages_page.dart';
 
