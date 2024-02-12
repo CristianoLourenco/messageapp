@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:messageapp/controllers/user_controller.dart';
+import 'package:messageapp/models/user_model.dart';
 import 'package:messageapp/widgets/user_input_text.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,14 +13,19 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController nameController, passwordController;
-/*
+  late UserModel? logedUser;
+  late bool isLogedUserExist, loadCircular;
+
   @override
   void initState() {
     nameController = TextEditingController();
     passwordController = TextEditingController();
+    logedUser = UserModel();
+    isLogedUserExist = false;
+    loadCircular = false;
     super.initState();
   }
-*/
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -49,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextSpan(
                         text: "Sms",
-                        style: GoogleFonts.roboto().copyWith(
+                        style: theme.textTheme.displayMedium?.copyWith(
                           fontSize: 28,
                           color: theme.primaryColor,
                           fontWeight: FontWeight.bold,
@@ -63,17 +70,19 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const Spacer(),
-                const Flexible(
+                Flexible(
                   flex: 4,
                   child: Column(
                     children: [
                       UserTextFieldWidget(
-                        labelText: "Nome de Usuário",
-                        prefixIcon: Icon(Icons.person_pin_rounded),
+                        prefixIcon: const Icon(Icons.person_pin_rounded),
+                        controller: nameController,
+                        labelText: "Número de Identificação",
                       ),
-                      Divider(color: Colors.transparent),
+                      const Divider(color: Colors.transparent),
                       UserTextFieldWidget(
-                        prefixIcon: Icon(Icons.lock_person_rounded),
+                        prefixIcon: const Icon(Icons.lock_person_rounded),
+                        controller: passwordController,
                         labelText: "Palavra-passe",
                         obscureText: true,
                       ),
@@ -82,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const Spacer(),
                 FilledButton(
-                  onPressed: () {},
+                  onPressed: _login,
                   style: FilledButton.styleFrom(
                     minimumSize: const Size(double.maxFinite, 60),
                     shape: RoundedRectangleBorder(
@@ -90,21 +99,22 @@ class _LoginPageState extends State<LoginPage> {
                       side: const BorderSide(color: Colors.black12),
                     ),
                   ),
-                  child: const Stack(
+                  child: Stack(
                     children: [
-                      Align(
+                      const Align(
                         heightFactor: 2,
                         alignment: Alignment.center,
                         child: Text("Entrar", textAlign: TextAlign.center),
                       ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeAlign: -3,
-                        ),
+                        child: loadCircular
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeAlign: -3,
+                              )
+                            : const SizedBox.shrink(),
                       )
-                      // Icon(Icons.check)
                     ],
                   ),
                 ),
@@ -130,5 +140,30 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> getResponse(UserController userController) async {
+    await Future.delayed(const Duration(seconds: 2));
+    http.Response response = await http.get(userController.getUsers());
+    userController.convertJsonUsers(response.body);
+    isLogedUserExist =
+        userController.logIn(nameController.text, passwordController.text);
+    logedUser = userController.logedUser();
+  }
+
+  void _login() async {
+    final userController = UserController();
+
+    setState(() => loadCircular = true);
+    await getResponse(userController).whenComplete(
+      () => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isLogedUserExist ? 'Usuario encontrado!' : 'Usuario invalido',
+          ),
+        ),
+      ),
+    );
+    setState(() => loadCircular = false);
   }
 }
