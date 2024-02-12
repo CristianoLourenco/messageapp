@@ -1,81 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:messageapp/widgets/user_input_text.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  late TextEditingController nameController, passwordController;
+/*
+  @override
+  void initState() {
+    nameController = TextEditingController();
+    passwordController = TextEditingController();
+    super.initState();
+  }
+*/
+  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
         child: SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: size.height,
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * .05),
+            padding: EdgeInsets.symmetric(horizontal: size.width * .05),
             child: Column(
               children: [
                 const Spacer(),
                 Expanded(
-                    flex: 6,
-                    child: Image.asset('assets/images/logo.png', scale: 3)),
+                  flex: 6,
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    scale: 3,
+                  ),
+                ),
                 Text.rich(
                   TextSpan(
                     children: [
                       TextSpan(
                         text: "Bem vindo ao \"",
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: theme.textTheme.titleLarge,
                       ),
                       TextSpan(
                         text: "Sms",
-                        style:
-                            GoogleFonts.robotoTextTheme().titleLarge?.copyWith(
-                                  fontSize: 28,
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        style: GoogleFonts.roboto().copyWith(
+                          fontSize: 28,
+                          color: theme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       TextSpan(
                         text: "\"",
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: theme.textTheme.titleLarge,
                       ),
                     ],
                   ),
                 ),
                 const Spacer(),
-                Flexible(
+                const Flexible(
                   flex: 4,
                   child: Column(
                     children: [
-                      TextField(
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: "Nome de Usuário",
-                          hintText: "ex: Crstiano Lourenco",
-                          prefixIcon: const Icon(Icons.person_pin_rounded),
-                          floatingLabelStyle: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                        ),
+                      UserTextFieldWidget(
+                        labelText: "Nome de Usuário",
+                        prefixIcon: Icon(Icons.person_pin_rounded),
                       ),
-                      const Divider(color: Colors.transparent),
-                      TextField(
+                      Divider(color: Colors.transparent),
+                      UserTextFieldWidget(
+                        prefixIcon: Icon(Icons.lock_person_rounded),
+                        labelText: "Palavra-passe",
                         obscureText: true,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          prefixIcon: const Icon(Icons.lock_person_rounded),
-                          labelText: "Palavra-passe",
-                          floatingLabelStyle: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                        ),
                       ),
                     ],
                   ),
