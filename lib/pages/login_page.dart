@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:messageapp/controllers/user_controller.dart';
 import 'package:messageapp/models/user_model.dart';
+import 'package:messageapp/pages/home_page.dart';
 import 'package:messageapp/widgets/user_input_text.dart';
 import 'package:http/http.dart' as http;
 
@@ -155,15 +156,31 @@ class _LoginPageState extends State<LoginPage> {
     final userController = UserController();
 
     setState(() => loadCircular = true);
-    await getResponse(userController).whenComplete(
-      () => ScaffoldMessenger.of(context).showSnackBar(
+    await getResponse(userController).whenComplete(() {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          showCloseIcon: true,
+          elevation: 8,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: isLogedUserExist
+              ? Colors.green
+              : Theme.of(context).colorScheme.error,
           content: Text(
-            isLogedUserExist ? 'Usuario encontrado!' : 'Usuario invalido',
+            isLogedUserExist
+                ? 'Seja bem Vindo: ${logedUser?.name ?? ''}'
+                : 'Usuario inválido!',
           ),
         ),
-      ),
-    );
-    setState(() => loadCircular = false);
+      );
+    });
+    setState(() {
+      loadCircular = false;
+      isLogedUserExist
+          ? Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const HomePage()),
+              (route) => false)
+          : () {};
+    });
   }
 }
