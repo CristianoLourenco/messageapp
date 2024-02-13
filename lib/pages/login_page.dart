@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:messageapp/config/app_text_config.dart';
 import 'package:messageapp/controllers/user_controller.dart';
+import 'package:messageapp/models/response_status_model.dart';
 import 'package:messageapp/models/user_model.dart';
 import 'package:messageapp/pages/home_page.dart';
 import 'package:messageapp/widgets/user_input_text.dart';
-import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -152,13 +152,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> getResponse(UserController userController) async {
+  Future<ResponseStatusModel> getResponse(UserController userController) async {
     await Future.delayed(const Duration(milliseconds: 1500));
-    http.Response response = await http.get(userController.getUsers());
-    userController.convertJsonUsers(response.body);
+    final response = await userController.convertJsonUsers();
     isLogedUserExist =
         userController.logIn(nameController.text, passwordController.text);
     logedUser = userController.logedUser();
+    return response;
   }
 
   void _login() async {
