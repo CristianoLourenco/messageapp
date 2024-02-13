@@ -11,7 +11,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final users = UserController().allUsers();
-
     final theme = Theme.of(context);
     final dataFormat = DateFormat.yMd();
     final hour = DateFormat.Hm();

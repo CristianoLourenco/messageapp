@@ -24,7 +24,6 @@ class _LoginPageState extends State<LoginPage> {
     nameController = TextEditingController();
     passwordController = TextEditingController();
     respondeStatus = ResponseStatusModel();
-    logedUser = UserModel();
     loadCircular = false;
     super.initState();
   }
@@ -163,15 +162,16 @@ class _LoginPageState extends State<LoginPage> {
   void _login() async {
     final userController = UserController();
     final appText = AppTextConfig();
-    final anyError = respondeStatus.statusCode != 200;
+    bool anyError = false;
 
     setState(() => loadCircular = true);
     await getResponse(userController).whenComplete(() {
+      anyError = respondeStatus.statusCode != 200 || logedUser == null;
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          showCloseIcon: true,
           elevation: 8,
+          showCloseIcon: true,
           behavior: SnackBarBehavior.floating,
           backgroundColor:
               anyError ? Theme.of(context).colorScheme.error : Colors.green,
@@ -188,7 +188,9 @@ class _LoginPageState extends State<LoginPage> {
       loadCircular = false;
       if (!anyError) {
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(
+                barrierDismissible: true,
+                builder: (context) => const HomePage()),
             (route) => false);
       }
     });

@@ -14,6 +14,7 @@ class UserController {
   }
 
   Future<ResponseStatusModel> convertJsonUsers() async {
+    _users.clear();
     http.Response response = await http.get(_getUsers());
     final responseStatus = ResponseStatusModel(
       message: response.reasonPhrase ?? '',
@@ -30,11 +31,12 @@ class UserController {
   }
 
   List<UserModel> allUsers() {
-    final allUsers = _users;
+    final allUsers = _users.where((u) => u.id != _logedUser?.id).toList();
+    allUsers.sort((a, b) => a.name.compareTo(b.name));
     return allUsers;
   }
 
-  bool logIn(String phone, String passWord) {
+  void logIn(String phone, String passWord) {
     final listProbabelUsers = _users
         .where((u) => u.phoneNumber == phone && u.passWord == passWord)
         .toList();
@@ -43,7 +45,6 @@ class UserController {
     } else {
       _logedUser = null;
     }
-    return listProbabelUsers.isNotEmpty;
   }
 
   UserModel? logedUser() => _logedUser;
