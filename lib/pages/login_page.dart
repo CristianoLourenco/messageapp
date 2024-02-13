@@ -15,15 +15,16 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController nameController, passwordController;
+  late ResponseStatusModel respondeStatus;
   late UserModel? logedUser;
-  late bool isLogedUserExist, loadCircular;
+  late bool loadCircular;
 
   @override
   void initState() {
     nameController = TextEditingController();
     passwordController = TextEditingController();
+    respondeStatus = ResponseStatusModel();
     logedUser = UserModel();
-    isLogedUserExist = false;
     loadCircular = false;
     super.initState();
   }
@@ -152,18 +153,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<ResponseStatusModel> getResponse(UserController userController) async {
+  Future<void> getResponse(UserController userController) async {
     await Future.delayed(const Duration(milliseconds: 1500));
-    final response = await userController.convertJsonUsers();
-    isLogedUserExist =
-        userController.logIn(nameController.text, passwordController.text);
+    respondeStatus = await userController.convertJsonUsers();
+    userController.logIn(nameController.text, passwordController.text);
     logedUser = userController.logedUser();
-    return response;
   }
 
   void _login() async {
     final userController = UserController();
     final appText = AppTextConfig();
+    final anyError = respondeStatus.statusCode != 200;
 
     setState(() => loadCircular = true);
     await getResponse(userController).whenComplete(() {
@@ -173,13 +173,12 @@ class _LoginPageState extends State<LoginPage> {
           showCloseIcon: true,
           elevation: 8,
           behavior: SnackBarBehavior.floating,
-          backgroundColor: isLogedUserExist
-              ? Colors.green
-              : Theme.of(context).colorScheme.error,
+          backgroundColor:
+              anyError ? Theme.of(context).colorScheme.error : Colors.green,
           content: Text(
-            isLogedUserExist
-                ? '${appText.welcome}: ${logedUser?.name ?? ''}'
-                : appText.invalidUser,
+            anyError
+                ? appText.invalidUser
+                : '${appText.welcome}: ${logedUser?.name ?? ''}',
           ),
         ),
       );
@@ -187,11 +186,11 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() {
       loadCircular = false;
-      isLogedUserExist
-          ? Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const HomePage()),
-              (route) => false)
-          : () {};
+      if (!anyError) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const HomePage()),
+            (route) => false);
+      }
     });
   }
 }
