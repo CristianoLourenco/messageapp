@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:messageapp/config/app_text_config.dart';
 import 'package:messageapp/controllers/user_controller.dart';
 import 'package:messageapp/models/user_model.dart';
 import 'package:messageapp/pages/home_page.dart';
@@ -28,9 +29,17 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void dispose() {
+    nameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
+    final appText = AppTextConfig();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -52,11 +61,11 @@ class _LoginPageState extends State<LoginPage> {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: "Bem vindo ao \"",
+                        text: "${appText.welcomeTo} \"",
                         style: theme.textTheme.titleLarge,
                       ),
                       TextSpan(
-                        text: "Sms",
+                        text: appText.sms,
                         style: theme.textTheme.displayMedium?.copyWith(
                           fontSize: 28,
                           color: theme.primaryColor,
@@ -78,13 +87,13 @@ class _LoginPageState extends State<LoginPage> {
                       UserTextFieldWidget(
                         prefixIcon: const Icon(Icons.person_pin_rounded),
                         controller: nameController,
-                        labelText: "Número de Identificação",
+                        labelText: appText.identificationNumber,
                       ),
                       const Divider(color: Colors.transparent),
                       UserTextFieldWidget(
                         prefixIcon: const Icon(Icons.lock_person_rounded),
                         controller: passwordController,
-                        labelText: "Palavra-passe",
+                        labelText: appText.passWord,
                         obscureText: true,
                       ),
                     ],
@@ -102,10 +111,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Stack(
                     children: [
-                      const Align(
+                      Align(
                         heightFactor: 2,
                         alignment: Alignment.center,
-                        child: Text("Entrar", textAlign: TextAlign.center),
+                        child: Text(appText.enter, textAlign: TextAlign.center),
                       ),
                       Align(
                         alignment: Alignment.centerRight,
@@ -125,10 +134,10 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Ainda não possui uma conta?"),
+                      Text(appText.dontHaveAccount),
                       TextButton(
                         onPressed: () {},
-                        child: const Text("Criar conta"),
+                        child: Text(appText.createAcount),
                       ),
                     ],
                   ),
@@ -144,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> getResponse(UserController userController) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(milliseconds: 1500));
     http.Response response = await http.get(userController.getUsers());
     userController.convertJsonUsers(response.body);
     isLogedUserExist =
@@ -154,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     final userController = UserController();
+    final appText = AppTextConfig();
 
     setState(() => loadCircular = true);
     await getResponse(userController).whenComplete(() {
@@ -168,12 +178,13 @@ class _LoginPageState extends State<LoginPage> {
               : Theme.of(context).colorScheme.error,
           content: Text(
             isLogedUserExist
-                ? 'Seja bem Vindo: ${logedUser?.name ?? ''}'
-                : 'Usuario inválido!',
+                ? '${appText.welcome}: ${logedUser?.name ?? ''}'
+                : appText.invalidUser,
           ),
         ),
       );
     });
+
     setState(() {
       loadCircular = false;
       isLogedUserExist
