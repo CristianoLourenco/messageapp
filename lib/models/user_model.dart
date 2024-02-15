@@ -15,9 +15,9 @@ class UserModel {
     this.passWord = '',
   });
 
-  factory UserModel.fromJson(dynamic json) {
+  factory UserModel.fromJson(String id, dynamic json) {
     final model = UserModel(
-      id: json['id'],
+      id: id,
       name: json['name'] ?? '',
       phoneNumber: json['phone'] ?? '',
       photoUrl: json['image'],
@@ -28,5 +28,14 @@ class UserModel {
     return model;
   }
 
-  void toJson() {}
+  Map<String, dynamic> toJson() {
+    final json = {
+      // 'id': id,
+      'name': name,
+      'image': photoUrl,
+      'password': passWord,
+      'phone': phoneNumber,
+    };
+    return json;
+  }
 }

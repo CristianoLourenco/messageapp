@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:messageapp/controllers/message_controller.dart';
+import 'package:messageapp/controllers/user_controller.dart';
 import 'package:messageapp/models/message_model.dart';
 import 'package:messageapp/models/user_model.dart';
 
@@ -71,8 +72,7 @@ class _MessagesPageState extends State<MessagesPage> {
       body: FutureBuilder(
         future: messageController.convertJsonMessage(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            messageController.convertJsonMessage();
+          if (snapshot.hasData) { 
             messages = messageController.allMessages(widget.user.id ?? '');
             return bodyReturn(messages);
           } else {
@@ -147,5 +147,15 @@ class _MessagesPageState extends State<MessagesPage> {
           );
   }
 
-  void sendMessage() async {}
+  void sendMessage() async {
+    final senderId = widget.user.id ?? '';
+    final receiverId = UserController().logedUser()?.id ?? '';
+    final message = MessageModel(
+      createdDate: DateTime.now(),
+      receiverId: senderId,
+      senderId: receiverId,
+      content: sendMessageController.text,
+    );
+    await messageController.sendMessage(message);
+  }
 }

@@ -152,10 +152,10 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> getResponse(UserController userController) async {
+  Future<void> getLoginUser(UserController userController) async {
     await Future.delayed(const Duration(milliseconds: 1500));
     respondeStatus = await userController.convertJsonUsers();
-    userController.logIn(nameController.text, passwordController.text);
+    userController.getLogedUser(nameController.text, passwordController.text);
     logedUser = userController.logedUser();
   }
 
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
     bool anyError = false;
 
     setState(() => loadCircular = true);
-    await getResponse(userController).whenComplete(() {
+    await getLoginUser(userController).whenComplete(() {
       anyError = respondeStatus.statusCode != 200 || logedUser == null;
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(

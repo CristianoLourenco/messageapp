@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:messageapp/config/firebase_config.dart';
 import 'package:messageapp/controllers/user_controller.dart';
 import 'package:messageapp/models/message_model.dart';
 import 'package:messageapp/models/response_status_model.dart';
@@ -7,27 +6,22 @@ import 'package:messageapp/models/response_status_model.dart';
 final _messages = <MessageModel>[];
 
 class MessageController {
-  Uri _getMessages() {
-    final uri = Uri.parse(
-        'https://65527d4c5c69a779032a1a48.mockapi.io/getinfoapp/messages');
-    return uri;
-  }
-
   Future<ResponseStatusModel> convertJsonMessage() async {
     _messages.clear();
-    http.Response response = await http.get(_getMessages());
-    final responseStatus = ResponseStatusModel(
-      message: response.reasonPhrase ?? '',
-      statusCode: response.statusCode,
-    );
-    if (response.statusCode == 200) {
-      final smsJson = jsonDecode(response.body) as List<dynamic>;
-      for (var sms in smsJson) {
-        _messages.add(MessageModel.fromJson(sms));
-      }
-      return responseStatus;
+    final data = await getFirebaseMessage.get();
+
+    for (var sms in data.docs) {
+      _messages.add(sms.data());
     }
-    return responseStatus;
+
+    if (_messages.isNotEmpty) {
+      return ResponseStatusModel(statusCode: 200);
+    }
+    return ResponseStatusModel();
+  }
+
+  Future<void> sendMessage(MessageModel model) async {
+    await getFirebaseMessage.add(model);
   }
 
   List<MessageModel> allMessages(String senderId) {
@@ -42,4 +36,15 @@ class MessageController {
 
     return allMessages;
   }
+
+/* MOCKAPI
+  convertTojson
+   
+
+
+    sendMessage
+      print(body);
+    final response = await http.post(_getMessages(), body: body);
+    print(response.statusCode);
+    */
 }
